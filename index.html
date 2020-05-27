@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>FriendlyScale v2</title>
+    <meta name="description" content="Friendly Scale for Ceremor stream">
+    <meta name="author" content="EdgarMelons">
+    <link href="index.css" rel="stylesheet">
+    <script src="https://unpkg.com/twitch-js@2.0.0-beta.33/dist/twitch.js"></script>
+    <script src="FriendlyScale.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.0.8/purify.min.js"></script>
+
+ 
+    <audio id="jonnyintro"><source src="sounds/jonnyintro.wav" type="audio/wav"></audio>
+    <img id="ceremorFaceChill" src="images/ceremorFaceChill.png" style="display:none"/>
+    <img id="ceremorFaceTense" src="images/ceremorFaceTense.png" style="display:none"/>
+    <img id="ceremorFaceCrazy" src="images/ceremorFaceCrazy.png" style="display:none"/>
+    
+</head>
+
+<body onload="setInitial()">
+    <div id="container">
+        <div id="canvasplate">
+            <canvas id="myCanvas" width="700" height="300" style="border:1px solid #d3d3d3;position:absolute;left:250px;top:100px;z-index:45;">
+            Your browser does not support the HTML5 canvas tag.
+        </canvas>
+    </div>
+        
+        <input type="submit" id="connect_btn" onclick="channelPointsAdd(1000);" name="" value="addPercent" style="position:absolute;left:480px;top:550px;width:121px;height:30px;z-index:45;""">
+        <input type="submit" id="connect_btn" onclick="channelPointsSub(1000);" name="" value="subPercent" style="position:absolute;left:620px;top:550px;width:121px;height:30px;z-index:45;""">
+        <input type="submit" id="connect_btn" onclick="ConnectTwitchChat();" name="" value="Connect" style="position:absolute;left:480px;top:650px;width:121px;height:30px;z-index:45;""">
+        <input type="submit" id="disconnect_btn" onclick="DisconnectTwitchChat();" name="" value="Disconnect" style="position:absolute;left:620px;top:650px;width:121px;height:30px;z-index:45;""">
+        <label id="status" style="position:absolute;left:372px;top:590px;width:455px;height:62px;line-height:62px;z-index:47;">???</label>
+        <label id="channelPointsModifierLabel"style="position:absolute;left:372px;top:700px;width:455px;height:62px;line-height:62px;z-index:47;"></label>
+        <input id="channelPointSlider" style="position:absolute;left:372px;top:720px;width:455px;height:62px;line-height:62px;z-index:47;" type="range" min="1" max="20" value="10" >
+        <label id="depletionRateLabel"style="position:absolute;left:372px;top:780px;width:455px;height:62px;line-height:62px;z-index:47;"></label>
+        <input id="depletionRateSlider" style="position:absolute;left:372px;top:800px;width:455px;height:62px;line-height:62px;z-index:47;" type="range" min="1" max="20" value="10" >
+    </div>
+
+    <div id="PageHeader1" style="position:absolute;text-align:left;left:0px;top:0px;width:100%;height:92px;z-index:7777;">
+        <div id="wb_title" style="position:absolute;left:360px;top:17px;width:486px;height:59px;text-align:center;z-index:1;">
+            <span style="color:#FBFBFB;font-family:'MS Sans Serif';font-size:48px;"><strong>Friendly Scale</strong></span></div>
+        <div id="wb_Text1" style="position:absolute;left:830px;top:62px;width:42px;height:30px;text-align:center;z-index:3;"></div>
+    <div id="PageFooter1" style="position:absolute;overflow:hidden;text-align:center;left:0px;top:1001px;width:100%;height:100px;z-index:55;">
+        <div id="PageFooter1_Container" style="width:1201px;position:relative;margin-left:auto;margin-right:auto;text-align:left;"></div>
+    </div>
+</body>
+
+</html>
