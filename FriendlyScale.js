@@ -227,7 +227,7 @@ function setInitial() {
   var depletionRateLabel = document.getElementById('depletionRateLabel');
   var bitsModifierLabel = document.getElementById('bitsModifierLabel');
 
-  channelPointModifier = rangeInput.value * 2;
+  channelPointModifier = rangeInput.value;
   channelPointsModifierLabel.innerHTML = `1,000 channel points is worth: ${channelPointModifier} %`;
 
   depletionRateModifier = depletionRateSlider.value;
@@ -239,7 +239,7 @@ function setInitial() {
   depletionTimer = setUpDepletion();
 
   rangeInput.addEventListener('mouseup', function () {
-    channelPointModifier = rangeInput.value * 2;
+    channelPointModifier = rangeInput.value;
     channelPointsModifierLabel.innerHTML = `1,000 channel points is worth: ${channelPointModifier} %`;
   });
 
