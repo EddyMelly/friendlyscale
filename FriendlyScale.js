@@ -7,6 +7,8 @@ var channelPointModifier = 0;
 var depletionRateModifier = 0;
 var bitsModifier = 0;
 var depetionTimer;
+var lastSound;
+var soundflip;
 var c;
 var ctx;
 var rectangle;
@@ -184,12 +186,16 @@ function drawPicture(number) {
   }
   if (number >= 71 && number <= 100) {
     statusImage = document.getElementById('ceremorFaceCrazy');
+    var evilSound = document.getElementById('evilSound');
+    PlaySound(evilSound);
   }
   if (number <= -31 && number >= -70) {
     statusImage = document.getElementById('ceremorFaceLove');
   }
   if (number <= -71 && number >= -100) {
     statusImage = document.getElementById('ceremorFaceAngel');
+    var goodSound = document.getElementById('goodSound');
+    PlaySound(goodSound);
   }
 
   ctx.drawImage(statusImage, 5, 30);
@@ -208,6 +214,8 @@ function fillRect(number) {
 
 function setInitial() {
   setUpCanvas();
+  winSound = document.getElementById('evilSound');
+  lastSound = document.getElementById('chaosLaugh');
   var rangeInput = document.getElementById('channelPointSlider');
   var depletionRateSlider = document.getElementById('depletionRateSlider');
   var bitsModiferSlider = document.getElementById('bitsModifierSlider');
@@ -225,7 +233,7 @@ function setInitial() {
   depletionRateModifier = depletionRateSlider.value;
   depletionRateLabel.innerHTML = `${depletionRateModifier}% will deplete every minute`;
 
-  bitsModifier = bitsModiferSlider.value / 5;
+  bitsModifier = bitsModiferSlider.value / 2;
   bitsModifierLabel.innerHTML = `100 bits (1$) is worth: ${bitsModifier} %`;
 
   depletionTimer = setUpDepletion();
@@ -241,7 +249,7 @@ function setInitial() {
   });
 
   bitsModiferSlider.addEventListener('mouseup', function () {
-    bitsModifier = bitsModiferSlider.value / 5;
+    bitsModifier = bitsModiferSlider.value / 2;
     bitsModifierLabel.innerHTML = `100 bits (1$) is worth: ${bitsModifier} %`;
   });
 }
@@ -304,8 +312,14 @@ function chaos() {
 }
 
 function PlaySound(passedSound) {
-  var winSound = passedSound;
-  console.log(winSound);
-  winSound.volume = 0.5;
-  winSound.play();
+  var lastSoundId = lastSound['id'];
+
+  if (lastSoundId !== passedSound['id']) {
+    winSound.pause();
+    winSound = passedSound;
+    winSound.load();
+    winSound.volume = 0.4;
+    winSound.play();
+    lastSound = passedSound;
+  }
 }
