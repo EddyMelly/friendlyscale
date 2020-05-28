@@ -300,7 +300,6 @@ function chaos() {
   var intro = document.getElementById('chaosLaugh');
   intro.volume = 0.2;
   intro.play();
-  console.log('is it making it here?');
   chaosEntrance = false;
 }
 
