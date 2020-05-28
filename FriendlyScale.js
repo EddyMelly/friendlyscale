@@ -1,6 +1,7 @@
 var isConnected = false;
 var connectedChannel = '';
 var jonnyEntrance = false;
+var chaosEntrance = false;
 var overallPercent = 0;
 var channelPointModifier = 0;
 var depletionRateModifier = 0;
@@ -34,6 +35,7 @@ function ConnectTwitchChat() {
         .then(() => {
           isConnected = true;
           jonnyEntrance = true;
+          chaosEntrance = true;
           connectedChannel = channel;
           document.getElementById('status').innerHTML = 'connected';
           document.getElementById('status').style.color = 'green';
@@ -78,7 +80,11 @@ function ConnectTwitchChat() {
     }
     if (message.tags['username'] === 'jonnyhaull' && jonnyEntrance === true) {
       jonny();
-    } else {
+    } else if (
+      message.tags['username'] === 'chaosshield' &&
+      chaosEntrance === true
+    ) {
+      chaos();
     }
   });
 }
@@ -87,7 +93,7 @@ function channelPointDecision(pointNumber, message) {
   var uppercaseMessage = message.toUpperCase();
 
   if (uppercaseMessage.includes('EVIL') && uppercaseMessage.includes('GOOD')) {
-    conaole.log('do nothing');
+    channelPointsAdd(pointNumber);
   } else if (uppercaseMessage.includes('GOOD')) {
     channelPointsSub(pointNumber);
   } else if (uppercaseMessage.includes('EVIL')) {
@@ -99,7 +105,7 @@ function bitDecision(bitNumber, message) {
   var uppercaseMessage = message.toUpperCase();
 
   if (uppercaseMessage.includes('EVIL') && uppercaseMessage.includes('GOOD')) {
-    console.log('do nothing');
+    bitsAdd(bitNumber);
   } else if (uppercaseMessage.includes('GOOD')) {
     bitsSubtract(bitNumber);
   } else if (uppercaseMessage.includes('EVIL')) {
@@ -288,6 +294,14 @@ function jonny() {
   intro.volume = 0.4;
   intro.play();
   jonnyEntrance = false;
+}
+
+function chaos() {
+  var intro = document.getElementById('chaosLaugh');
+  intro.volume = 0.2;
+  intro.play();
+  console.log('is it making it here?');
+  chaosEntrance = false;
 }
 
 function PlaySound(passedSound) {
