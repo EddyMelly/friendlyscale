@@ -233,19 +233,19 @@ function setInitial() {
   var depletionRateLabel = document.getElementById('depletionRateLabel');
   var bitsModifierLabel = document.getElementById('bitsModifierLabel');
 
-  channelPointModifier = rangeInput.value * 2;
+  channelPointModifier = rangeInput.value;
   channelPointsModifierLabel.innerHTML = `1,000 channel points is worth: ${channelPointModifier} %`;
 
   depletionRateModifier = depletionRateSlider.value;
   depletionRateLabel.innerHTML = `${depletionRateModifier}% will deplete every minute`;
 
-  bitsModifier = bitsModiferSlider.value / 2;
+  bitsModifier = bitsModiferSlider.value;
   bitsModifierLabel.innerHTML = `100 bits (1$) is worth: ${bitsModifier} %`;
 
   depletionTimer = setUpDepletion();
 
   rangeInput.addEventListener('mouseup', function () {
-    channelPointModifier = rangeInput.value * 2;
+    channelPointModifier = rangeInput.value;
     channelPointsModifierLabel.innerHTML = `1,000 channel points is worth: ${channelPointModifier} %`;
   });
 
@@ -255,7 +255,7 @@ function setInitial() {
   });
 
   bitsModiferSlider.addEventListener('mouseup', function () {
-    bitsModifier = bitsModiferSlider.value / 2;
+    bitsModifier = bitsModiferSlider.value;
     bitsModifierLabel.innerHTML = `100 bits (1$) is worth: ${bitsModifier} %`;
   });
 }
