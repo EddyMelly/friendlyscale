@@ -4,11 +4,12 @@ var jonnyEntrance = false;
 var overallPercent = 0;
 var channelPointModifier = 0;
 var depletionRateModifier = 0;
+var bitsModifier = 0;
 var depetionTimer;
 var c;
 var ctx;
 var rectangle;
-var rectangleStart = 400;
+var rectangleStart = 452;
 var rectangleHeight = 60;
 var rectanglePositionTop = 122;
 
@@ -21,8 +22,6 @@ function DisconnectTwitchChat() {
   document.getElementById('status').innerHTML = 'disconnected';
   document.getElementById('status').style.color = 'red';
 }
-
-console.log(channelPointModifier);
 
 function ConnectTwitchChat() {
   const channel = 'ceremor';
@@ -39,7 +38,6 @@ function ConnectTwitchChat() {
           document.getElementById('status').innerHTML = 'connected';
           document.getElementById('status').style.color = 'green';
           console.log('connected boy');
-          // document.getElementById("connect_btn").style.background = "#32CD32"
         })
         .catch(function (err) {
           console.log(err);
@@ -61,21 +59,52 @@ function ConnectTwitchChat() {
     });
 
     //console.log(message.tags['customRewardId']);
-    //9d0e9bf9-d2dc-4ed3-b4bc-c048c0a2794d
-    console.log(channelPointModifier);
+
+    //1000 points 17a85bbf-e287-44d2-a88e-27cfc0edb649
+    //10000 points 46f5996e-bec3-407b-a3c3-3d1e782eb559
+
+    if ('bits' in message) {
+      bitDecision(message.bits, clean_message);
+    }
     if (
-      message.tags['customRewardId'] === '9d0e9bf9-d2dc-4ed3-b4bc-c048c0a2794d'
+      message.tags['customRewardId'] === '17a85bbf-e287-44d2-a88e-27cfc0edb649'
     ) {
-      addPoints();
-    } else if (
-      message.tags['username'] === 'jonnyhaull' &&
-      jonnyEntrance === true
+      channelPointDecision(1000, clean_message);
+    }
+    if (
+      message.tags['customRewardId'] === '46f5996e-bec3-407b-a3c3-3d1e782eb559'
     ) {
-      console.log('jonny');
+      channelPointDecision(10000, clean_message);
+    }
+    if (message.tags['username'] === 'jonnyhaull' && jonnyEntrance === true) {
       jonny();
     } else {
     }
   });
+}
+
+function channelPointDecision(pointNumber, message) {
+  var uppercaseMessage = message.toUpperCase();
+
+  if (uppercaseMessage.includes('EVIL') && uppercaseMessage.includes('GOOD')) {
+    conaole.log('do nothing');
+  } else if (uppercaseMessage.includes('GOOD')) {
+    channelPointsSub(pointNumber);
+  } else if (uppercaseMessage.includes('EVIL')) {
+    channelPointsAdd(pointNumber);
+  }
+}
+
+function bitDecision(bitNumber, message) {
+  var uppercaseMessage = message.toUpperCase();
+
+  if (uppercaseMessage.includes('EVIL') && uppercaseMessage.includes('GOOD')) {
+    console.log('do nothing');
+  } else if (uppercaseMessage.includes('GOOD')) {
+    bitsSubtract(bitNumber);
+  } else if (uppercaseMessage.includes('EVIL')) {
+    bitsAdd(bitNumber);
+  }
 }
 
 function setUpDepletion() {
@@ -94,7 +123,7 @@ function setUpDepletion() {
         subtractPercent(-Math.abs(depletionRateModifier));
       }
     }
-  }, 6000);
+  }, 60000);
 }
 
 function setUpCanvas() {
@@ -108,17 +137,17 @@ function setUpBox() {
   ctx = c.getContext('2d');
   ctx.lineWidth = '4';
   ctx.strokeStyle = 'lightgrey';
-  ctx.rect(148, 118, 504, 67);
+  ctx.rect(200, 118, 504, 67);
   ctx.stroke();
 
   ctx.beginPath();
-  ctx.moveTo(400, 100);
-  ctx.lineTo(400, 118);
+  ctx.moveTo(452, 100);
+  ctx.lineTo(452, 118);
   ctx.stroke();
 
   ctx.beginPath();
-  ctx.moveTo(400, 184);
-  ctx.lineTo(400, 202);
+  ctx.moveTo(452, 184);
+  ctx.lineTo(452, 202);
   ctx.stroke();
 }
 
@@ -139,7 +168,7 @@ function setUpFill() {
 function drawPicture(number) {
   c = document.getElementById('myCanvas');
   ctx = c.getContext('2d');
-  ctx.clearRect(10, 90, 128, 128);
+  ctx.clearRect(5, 30, 192, 192);
   var statusImage = document.getElementById('ceremorFaceChill');
   if (number >= -30 && number <= 30) {
     statusImage = document.getElementById('ceremorFaceChill');
@@ -150,13 +179,18 @@ function drawPicture(number) {
   if (number >= 71 && number <= 100) {
     statusImage = document.getElementById('ceremorFaceCrazy');
   }
+  if (number <= -31 && number >= -70) {
+    statusImage = document.getElementById('ceremorFaceLove');
+  }
+  if (number <= -71 && number >= -100) {
+    statusImage = document.getElementById('ceremorFaceAngel');
+  }
 
-  ctx.drawImage(statusImage, 10, 90);
+  ctx.drawImage(statusImage, 5, 30);
 }
 
 function fillRect(number) {
-  //given percentage
-  ctx.clearRect(150, rectanglePositionTop, 500, rectangleHeight);
+  ctx.clearRect(202, rectanglePositionTop, 500, rectangleHeight);
   var rectangleBody = number * 2.5;
   ctx.fillRect(
     rectangleStart,
@@ -170,18 +204,23 @@ function setInitial() {
   setUpCanvas();
   var rangeInput = document.getElementById('channelPointSlider');
   var depletionRateSlider = document.getElementById('depletionRateSlider');
+  var bitsModiferSlider = document.getElementById('bitsModifierSlider');
 
   var channelPointsModifierLabel = document.getElementById(
     'channelPointsModifierLabel'
   );
 
   var depletionRateLabel = document.getElementById('depletionRateLabel');
+  var bitsModifierLabel = document.getElementById('bitsModifierLabel');
 
   channelPointModifier = rangeInput.value * 2;
   channelPointsModifierLabel.innerHTML = `1,000 channel points is worth: ${channelPointModifier} %`;
 
   depletionRateModifier = depletionRateSlider.value;
   depletionRateLabel.innerHTML = `${depletionRateModifier}% will deplete every minute`;
+
+  bitsModifier = bitsModiferSlider.value / 5;
+  bitsModifierLabel.innerHTML = `100 bits (1$) is worth: ${bitsModifier} %`;
 
   depletionTimer = setUpDepletion();
 
@@ -194,11 +233,24 @@ function setInitial() {
     depletionRateModifier = depletionRateSlider.value;
     depletionRateLabel.innerHTML = `${depletionRateModifier}% will deplete every minute`;
   });
+
+  bitsModiferSlider.addEventListener('mouseup', function () {
+    bitsModifier = bitsModiferSlider.value / 5;
+    bitsModifierLabel.innerHTML = `100 bits (1$) is worth: ${bitsModifier} %`;
+  });
+}
+
+function bitsAdd(number) {
+  var bitsToPercent = (number / 100) * bitsModifier;
+  addPercent(Math.round(bitsToPercent));
+}
+function bitsSubtract(number) {
+  var bitsToPercent = (number / 100) * bitsModifier;
+  subtractPercent(Math.round(bitsToPercent));
 }
 
 function channelPointsAdd(number) {
   var channelPointToPercent = (number / 1000) * channelPointModifier;
-  console.log(channelPointToPercent);
   addPercent(channelPointToPercent);
 }
 
@@ -210,9 +262,9 @@ function channelPointsSub(number) {
 function addPercent(number) {
   if (overallPercent + number > 100) {
     overallPercent = 100;
+    fillRect(overallPercent);
   } else {
     overallPercent += number;
-    console.log(`overall percent: ${overallPercent}`);
     fillRect(overallPercent);
     drawPicture(overallPercent);
   }
@@ -221,9 +273,9 @@ function addPercent(number) {
 function subtractPercent(number) {
   if (overallPercent - number < -100) {
     overallPercent = -100;
+    fillRect(overallPercent);
   } else {
     overallPercent -= number;
-    console.log(overallPercent);
     fillRect(overallPercent);
     drawPicture(overallPercent);
   }
