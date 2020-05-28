@@ -263,6 +263,7 @@ function addPercent(number) {
   if (overallPercent + number > 100) {
     overallPercent = 100;
     fillRect(overallPercent);
+    drawPicture(overallPercent);
   } else {
     overallPercent += number;
     fillRect(overallPercent);
@@ -274,6 +275,7 @@ function subtractPercent(number) {
   if (overallPercent - number < -100) {
     overallPercent = -100;
     fillRect(overallPercent);
+    drawPicture(overallPercent);
   } else {
     overallPercent -= number;
     fillRect(overallPercent);
