@@ -8,7 +8,7 @@ var depletionRateModifier = 0;
 var bitsModifier = 0;
 var depetionTimer;
 var lastSound;
-var soundflip;
+var soundActivate = false;
 var c;
 var ctx;
 var rectangle;
@@ -180,6 +180,11 @@ function drawPicture(number) {
   var statusImage = document.getElementById('ceremorFaceChill');
   if (number >= -30 && number <= 30) {
     statusImage = document.getElementById('ceremorFaceChill');
+    var emptySound = document.getElementById('emptySound');
+    if (soundActivate === false) {
+    } else {
+      PlaySound(emptySound);
+    }
   }
   if (number >= 31 && number <= 70) {
     statusImage = document.getElementById('ceremorFaceTense');
@@ -214,8 +219,9 @@ function fillRect(number) {
 
 function setInitial() {
   setUpCanvas();
-  winSound = document.getElementById('evilSound');
-  lastSound = document.getElementById('chaosLaugh');
+  winSound = document.getElementById('emptySound');
+  lastSound = document.getElementById('emptySound');
+  soundActivate = false;
   var rangeInput = document.getElementById('channelPointSlider');
   var depletionRateSlider = document.getElementById('depletionRateSlider');
   var bitsModiferSlider = document.getElementById('bitsModifierSlider');
@@ -227,7 +233,7 @@ function setInitial() {
   var depletionRateLabel = document.getElementById('depletionRateLabel');
   var bitsModifierLabel = document.getElementById('bitsModifierLabel');
 
-  channelPointModifier = rangeInput.value;
+  channelPointModifier = rangeInput.value * 2;
   channelPointsModifierLabel.innerHTML = `1,000 channel points is worth: ${channelPointModifier} %`;
 
   depletionRateModifier = depletionRateSlider.value;
@@ -239,7 +245,7 @@ function setInitial() {
   depletionTimer = setUpDepletion();
 
   rangeInput.addEventListener('mouseup', function () {
-    channelPointModifier = rangeInput.value;
+    channelPointModifier = rangeInput.value * 2;
     channelPointsModifierLabel.innerHTML = `1,000 channel points is worth: ${channelPointModifier} %`;
   });
 
@@ -318,8 +324,11 @@ function PlaySound(passedSound) {
     winSound.pause();
     winSound = passedSound;
     winSound.load();
-    winSound.volume = 0.4;
-    winSound.play();
+    if (passedSound['id'] !== 'emptySound') {
+      winSound.volume = 0.4;
+      winSound.play();
+    }
     lastSound = passedSound;
+    soundActivate = true;
   }
 }
