@@ -148,6 +148,9 @@ function setUpBox() {
   ctx.rect(200, 118, 504, 67);
   ctx.stroke();
 
+  bitsImage = document.getElementById('bitsImage');
+  ctx.drawImage(bitsImage, 710, 115);
+
   ctx.beginPath();
   ctx.moveTo(452, 100);
   ctx.lineTo(452, 118);
