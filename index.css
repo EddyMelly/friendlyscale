@@ -15,7 +15,22 @@ body {
   text-align: center;
   background-color: #1f1f23;
 }
+.sliderLabel {
+  color: white;
+  position: absolute;
+  height: 62px;
+  line-height: 62px;
+  z-index: 47;
+  width: 455px;
+}
 
+.slider {
+  position: absolute;
+  width: 455px;
+  height: 62px;
+  line-height: 62px;
+  z-index: 47;
+}
 #myCanvas {
   background-color: #32cd32;
 }
@@ -75,10 +90,4 @@ body {
   margin: 0;
   text-align: center;
   vertical-align: top;
-}
-
-#PageFooter1 {
-  background-color: #3c3c44;
-  background-image: none;
-  box-sizing: border-box;
 }

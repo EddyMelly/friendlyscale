@@ -3,15 +3,15 @@ var connectedChannel = '';
 var jonnyEntrance = false;
 var chaosEntrance = false;
 var overallPercent = 0;
-var channelPointModifier = 0;
-var depletionRateModifier = 0;
-var bitsModifier = 0;
+var previousPercent = 0;
+var channelPointModifier = { value: 0 };
+var depletionRateModifier = { value: 0 };
+var bitsModifier = { value: 0 };
 var depetionTimer;
 var lastSound;
 var soundActivate = false;
 var c;
 var ctx;
-var rectangle;
 var rectangleStart = 452;
 var rectangleHeight = 60;
 var rectanglePositionTop = 122;
@@ -28,7 +28,6 @@ function DisconnectTwitchChat() {
 
 function ConnectTwitchChat() {
   const channel = 'ceremor';
-  // Connect to Twitch
   chat
     .connect()
     .then(() => {
@@ -62,23 +61,23 @@ function ConnectTwitchChat() {
       ALLOWED_TAGS: ['b'],
     });
 
-    //console.log(message.tags['customRewardId']);
-
-    //1000 points 17a85bbf-e287-44d2-a88e-27cfc0edb649
-    //10000 points 46f5996e-bec3-407b-a3c3-3d1e782eb559
+    var clean_username = DOMPurify.sanitize(message.username, {
+      ALLOWED_TAGS: ['b'],
+    });
 
     if ('bits' in message) {
-      bitDecision(message.bits, clean_message);
+      bitDecision(message.bits, clean_message, clean_username);
     }
     if (
       message.tags['customRewardId'] === '17a85bbf-e287-44d2-a88e-27cfc0edb649'
     ) {
-      channelPointDecision(1000, clean_message);
+      channelPointDecision(1000, clean_message, clean_username);
+      console.log(message.username);
     }
     if (
       message.tags['customRewardId'] === '46f5996e-bec3-407b-a3c3-3d1e782eb559'
     ) {
-      channelPointDecision(10000, clean_message);
+      channelPointDecision(10000, clean_message, clean_username);
     }
     if (message.tags['username'] === 'jonnyhaull' && jonnyEntrance === true) {
       jonny();
@@ -91,44 +90,49 @@ function ConnectTwitchChat() {
   });
 }
 
-function channelPointDecision(pointNumber, message) {
+function channelPointDecision(pointNumber, message, username) {
   var uppercaseMessage = message.toUpperCase();
 
   if (uppercaseMessage.includes('EVIL') && uppercaseMessage.includes('GOOD')) {
     channelPointsAdd(pointNumber);
+    showUserName(username);
   } else if (uppercaseMessage.includes('GOOD')) {
     channelPointsSub(pointNumber);
+    showUserName(username);
   } else if (uppercaseMessage.includes('EVIL')) {
     channelPointsAdd(pointNumber);
+    showUserName(username);
   }
 }
 
-function bitDecision(bitNumber, message) {
+function bitDecision(bitNumber, message, username) {
   var uppercaseMessage = message.toUpperCase();
-
   if (uppercaseMessage.includes('EVIL') && uppercaseMessage.includes('GOOD')) {
     bitsAdd(bitNumber);
+    showUserName(username);
   } else if (uppercaseMessage.includes('GOOD')) {
     bitsSubtract(bitNumber);
+    showUserName(username);
   } else if (uppercaseMessage.includes('EVIL')) {
     bitsAdd(bitNumber);
+    showUserName(username);
   }
 }
 
 function setUpDepletion() {
   return setInterval(function () {
     if (overallPercent > 0) {
-      if (overallPercent < depletionRateModifier) {
+      if (overallPercent < depletionRateModifier.value) {
         subtractPercent(overallPercent);
       } else {
-        subtractPercent(depletionRateModifier);
+        subtractPercent(depletionRateModifier.value);
       }
     }
     if (overallPercent < 0) {
-      if (-Math.abs(depletionRateModifier) < overallPercent) {
+      if (-Math.abs(depletionRateModifier.value) < overallPercent) {
         subtractPercent(overallPercent);
       } else {
-        subtractPercent(-Math.abs(depletionRateModifier));
+        subtractPercent(-Math.abs(depletionRateModifier.value));
       }
     }
   }, 60000);
@@ -138,6 +142,16 @@ function setUpCanvas() {
   setUpBox();
   setUpFill();
   drawPicture(0);
+}
+
+function showUserName(userName) {
+  userNameUpper = userName.toUpperCase();
+  c = document.getElementById('myCanvas');
+  ctx = c.getContext('2d');
+  ctx.clearRect(195, 60, 500, 40);
+  ctx.font = '35px Monospace';
+  ctx.textAlign = 'left';
+  ctx.strokeText(userNameUpper, 200, 95);
 }
 
 function setUpBox() {
@@ -166,6 +180,7 @@ function setUpFill() {
   c = document.getElementById('myCanvas');
   ctx = c.getContext('2d');
   var grd = ctx.createLinearGradient(150, 0, 650, 0);
+
   grd.addColorStop(0, '#5353ff');
   grd.addColorStop(0.2, '#48fff6');
   grd.addColorStop(0.4, '#d6f8ff');
@@ -209,99 +224,124 @@ function drawPicture(number) {
   ctx.drawImage(statusImage, 5, 30);
 }
 
-function fillRect(number) {
+function fillRect(newNumber, previousNumber) {
   ctx.clearRect(202, rectanglePositionTop, 500, rectangleHeight);
-  var rectangleBody = number * 2.5;
-  ctx.fillRect(
-    rectangleStart,
-    rectanglePositionTop,
-    rectangleBody,
-    rectangleHeight
-  );
+  var rectangleBodyEnd = Math.round(newNumber * 2.5);
+  var rectangleBodyStart = Math.round(previousNumber * 2.5);
+
+  window.requestAnimationFrame(function loop() {
+    if (rectangleBodyStart > rectangleBodyEnd) {
+      rectangleBodyStart -= 1;
+      ctx.clearRect(202, rectanglePositionTop, 500, rectangleHeight);
+      ctx.fillRect(
+        rectangleStart,
+        rectanglePositionTop,
+        rectangleBodyStart,
+        rectangleHeight
+      );
+      window.requestAnimationFrame(loop);
+    } else if (rectangleBodyStart < rectangleBodyEnd) {
+      rectangleBodyStart += 1;
+      ctx.clearRect(202, rectanglePositionTop, 500, rectangleHeight);
+      ctx.fillRect(
+        rectangleStart,
+        rectanglePositionTop,
+        rectangleBodyStart,
+        rectangleHeight
+      );
+      window.requestAnimationFrame(loop);
+    } else if (rectangleBodyEnd === rectangleBodyStart) {
+      ctx.clearRect(202, rectanglePositionTop, 500, rectangleHeight);
+      ctx.fillRect(
+        rectangleStart,
+        rectanglePositionTop,
+        rectangleBodyEnd,
+        rectangleHeight
+      );
+    }
+  });
 }
 
 function setInitial() {
   setUpCanvas();
+
   winSound = document.getElementById('emptySound');
   lastSound = document.getElementById('emptySound');
   soundActivate = false;
-  var rangeInput = document.getElementById('channelPointSlider');
-  var depletionRateSlider = document.getElementById('depletionRateSlider');
-  var bitsModiferSlider = document.getElementById('bitsModifierSlider');
-
-  var channelPointsModifierLabel = document.getElementById(
-    'channelPointsModifierLabel'
+  setUpSlider(
+    'channelPointModifierSlider',
+    'channelPointModifierLabel',
+    '1,000 channel points is worth:',
+    channelPointModifier
+  );
+  setUpSlider(
+    'depletionRateSlider',
+    'depletionRateLabel',
+    'Depletion rate per minute:',
+    depletionRateModifier
+  );
+  setUpSlider(
+    'bitsModifierSlider',
+    'bitsModifierLabel',
+    '100 bits ($1) is worth:',
+    bitsModifier
   );
 
-  var depletionRateLabel = document.getElementById('depletionRateLabel');
-  var bitsModifierLabel = document.getElementById('bitsModifierLabel');
-
-  channelPointModifier = rangeInput.value;
-  channelPointsModifierLabel.innerHTML = `1,000 channel points is worth: ${channelPointModifier} %`;
-
-  depletionRateModifier = depletionRateSlider.value;
-  depletionRateLabel.innerHTML = `${depletionRateModifier}% will deplete every minute`;
-
-  bitsModifier = bitsModiferSlider.value;
-  bitsModifierLabel.innerHTML = `100 bits (1$) is worth: ${bitsModifier} %`;
-
   depletionTimer = setUpDepletion();
+}
 
-  rangeInput.addEventListener('mouseup', function () {
-    channelPointModifier = rangeInput.value;
-    channelPointsModifierLabel.innerHTML = `1,000 channel points is worth: ${channelPointModifier} %`;
-  });
-
-  depletionRateSlider.addEventListener('mouseup', function () {
-    depletionRateModifier = depletionRateSlider.value;
-    depletionRateLabel.innerHTML = `${depletionRateModifier}% will deplete every minute`;
-  });
-
-  bitsModiferSlider.addEventListener('mouseup', function () {
-    bitsModifier = bitsModiferSlider.value;
-    bitsModifierLabel.innerHTML = `100 bits (1$) is worth: ${bitsModifier} %`;
+function setUpSlider(sliderName, labelName, labelMessage, modifier) {
+  var slider = document.getElementById(sliderName);
+  var label = document.getElementById(labelName);
+  modifier.value = slider.value;
+  label.innerHTML = `${labelMessage} ${modifier.value} %`;
+  slider.addEventListener('mouseup', function () {
+    modifier.value = slider.value;
+    label.innerHTML = `${labelMessage} ${modifier.value} %`;
   });
 }
 
 function bitsAdd(number) {
-  var bitsToPercent = (number / 100) * bitsModifier;
+  var bitsToPercent = (number / 100) * bitsModifier.value;
   addPercent(Math.round(bitsToPercent));
 }
 function bitsSubtract(number) {
-  var bitsToPercent = (number / 100) * bitsModifier;
+  var bitsToPercent = (number / 100) * bitsModifier.value;
   subtractPercent(Math.round(bitsToPercent));
 }
 
 function channelPointsAdd(number) {
-  var channelPointToPercent = (number / 1000) * channelPointModifier;
+  var channelPointToPercent = (number / 1000) * channelPointModifier.value;
   addPercent(channelPointToPercent);
 }
 
 function channelPointsSub(number) {
-  var channelPointToPercent = (number / 1000) * channelPointModifier;
+  var channelPointToPercent = (number / 1000) * channelPointModifier.value;
   subtractPercent(channelPointToPercent);
 }
 
 function addPercent(number) {
+  previousPercent = overallPercent;
   if (overallPercent + number > 100) {
     overallPercent = 100;
-    fillRect(overallPercent);
+    fillRect(overallPercent, previousPercent);
     drawPicture(overallPercent);
   } else {
     overallPercent += number;
-    fillRect(overallPercent);
+    fillRect(overallPercent, previousPercent);
     drawPicture(overallPercent);
   }
 }
 
 function subtractPercent(number) {
+  previousPercent = overallPercent;
   if (overallPercent - number < -100) {
     overallPercent = -100;
-    fillRect(overallPercent);
+    fillRect(overallPercent, previousPercent);
     drawPicture(overallPercent);
   } else {
     overallPercent -= number;
-    fillRect(overallPercent);
+    fillRect(overallPercent, previousPercent);
     drawPicture(overallPercent);
   }
 }
