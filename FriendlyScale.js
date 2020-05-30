@@ -231,7 +231,13 @@ function fillRect(newNumber, previousNumber) {
 
   window.requestAnimationFrame(function loop() {
     if (rectangleBodyStart > rectangleBodyEnd) {
-      rectangleBodyStart -= 1;
+      if (rectangleBodyStart > rectangleBodyEnd + 15) {
+        console.log('faster');
+        rectangleBodyStart -= 2;
+      } else {
+        console.log('slower');
+        rectangleBodyStart -= 1;
+      }
       ctx.clearRect(202, rectanglePositionTop, 500, rectangleHeight);
       ctx.fillRect(
         rectangleStart,
@@ -241,7 +247,13 @@ function fillRect(newNumber, previousNumber) {
       );
       window.requestAnimationFrame(loop);
     } else if (rectangleBodyStart < rectangleBodyEnd) {
-      rectangleBodyStart += 1;
+      if (rectangleBodyStart < rectangleBodyEnd - 15) {
+        console.log('faster');
+        rectangleBodyStart += 2;
+      } else {
+        console.log('slower');
+        rectangleBodyStart += 1;
+      }
       ctx.clearRect(202, rectanglePositionTop, 500, rectangleHeight);
       ctx.fillRect(
         rectangleStart,
