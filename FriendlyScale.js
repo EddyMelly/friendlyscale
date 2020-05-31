@@ -148,10 +148,10 @@ function showUserName(userName) {
   userNameUpper = userName.toUpperCase();
   c = document.getElementById('myCanvas');
   ctx = c.getContext('2d');
-  ctx.clearRect(195, 60, 500, 40);
+  ctx.clearRect(195, 65, 500, 40);
   ctx.font = '35px Monospace';
   ctx.textAlign = 'left';
-  ctx.strokeText(userNameUpper, 200, 95);
+  ctx.strokeText(userNameUpper, 200, 90);
 }
 
 function setUpBox() {
