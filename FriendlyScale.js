@@ -1,31 +1,47 @@
+//just for connectTwitchChat
 var isConnected = false;
+//just for connectTwitchChat
 var connectedChannel = '';
+//shared ConnectTwitchChat and Jonny
 var jonnyEntrance = false;
+//shared ConnectTwitchChat and Chaos
 var chaosEntrance = false;
+// shared depletion addPercent and SubtractPercent
 var overallPercent = 0;
+// shared addPercent and SubtractPercent
 var previousPercent = 0;
+//setInitial channelPointsAdd and ChannelPointsSub
 var channelPointModifier = { value: 0 };
+//setInital and setUpDepletion
 var depletionRateModifier = { value: 0 };
+//setInital bitsAdd and bitsSubtract
 var bitsModifier = { value: 0 };
+//setInitial
 var depetionTimer;
+//setInitial and playsound
 var lastSound;
+//drawPicture setInitial and playSound
 var soundActivate = false;
+//showUserNAme, seupBox, setUpFill etc
 var c;
 var ctx;
+//setupFill, Fillrect
 var rectangleStart = 452;
 var rectangleHeight = 60;
 var rectanglePositionTop = 122;
-
+var subsOnly = false;
 const { chat, api } = new TwitchJs({
   log: { enabled: false },
 });
 
+//Move to new twitch file
 function DisconnectTwitchChat() {
   chat.disconnect();
   document.getElementById('status').innerHTML = 'disconnected';
   document.getElementById('status').style.color = 'red';
 }
 
+//MOVED TO A NEW TWITCH FILE
 function ConnectTwitchChat() {
   const channel = 'ceremor';
   chat
@@ -71,13 +87,22 @@ function ConnectTwitchChat() {
     if (
       message.tags['customRewardId'] === '17a85bbf-e287-44d2-a88e-27cfc0edb649'
     ) {
-      channelPointDecision(1000, clean_message, clean_username);
-      console.log(message.username);
+      channelPointDecision(
+        1000,
+        clean_message,
+        clean_username,
+        message.tags['badgeInfo']
+      );
     }
     if (
       message.tags['customRewardId'] === '46f5996e-bec3-407b-a3c3-3d1e782eb559'
     ) {
-      channelPointDecision(10000, clean_message, clean_username);
+      channelPointDecision(
+        10000,
+        clean_message,
+        clean_username,
+        message.tags['badgeInfo']
+      );
     }
     if (message.tags['username'] === 'jonnyhaull' && jonnyEntrance === true) {
       jonny();
@@ -90,23 +115,56 @@ function ConnectTwitchChat() {
   });
 }
 
-function channelPointDecision(pointNumber, message, username) {
-  var uppercaseMessage = message.toUpperCase();
-
-  if (uppercaseMessage.includes('EVIL') && uppercaseMessage.includes('GOOD')) {
-    channelPointsAdd(pointNumber);
-    showUserName(username);
-  } else if (uppercaseMessage.includes('GOOD')) {
-    channelPointsSub(pointNumber);
-    showUserName(username);
-  } else if (uppercaseMessage.includes('EVIL')) {
-    channelPointsAdd(pointNumber);
-    showUserName(username);
+function subCheck(subscriber) {
+  if (subscriber !== '') {
+    return true;
+  } else {
+    return false;
   }
 }
 
+function channelPointDecision(pointNumber, message, username, subscriber) {
+  var uppercaseMessage = message.toUpperCase();
+  //CHECK SUB MODE HERE
+
+  if (subsOnly === true) {
+    if (subCheck(subscriber)) {
+      if (
+        uppercaseMessage.includes('EVIL') &&
+        uppercaseMessage.includes('GOOD')
+      ) {
+        channelPointsAdd(pointNumber);
+        showUserName(username);
+      } else if (uppercaseMessage.includes('GOOD')) {
+        channelPointsSub(pointNumber);
+        showUserName(username);
+      } else if (uppercaseMessage.includes('EVIL')) {
+        channelPointsAdd(pointNumber);
+        showUserName(username);
+      }
+    } else {
+      console.log('no sub');
+    }
+  } else {
+    if (
+      uppercaseMessage.includes('EVIL') &&
+      uppercaseMessage.includes('GOOD')
+    ) {
+      channelPointsAdd(pointNumber);
+      showUserName(username);
+    } else if (uppercaseMessage.includes('GOOD')) {
+      channelPointsSub(pointNumber);
+      showUserName(username);
+    } else if (uppercaseMessage.includes('EVIL')) {
+      channelPointsAdd(pointNumber);
+      showUserName(username);
+    }
+  }
+}
+//MOVED
 function bitDecision(bitNumber, message, username) {
   var uppercaseMessage = message.toUpperCase();
+
   if (uppercaseMessage.includes('EVIL') && uppercaseMessage.includes('GOOD')) {
     bitsAdd(bitNumber);
     showUserName(username);
@@ -118,7 +176,7 @@ function bitDecision(bitNumber, message, username) {
     showUserName(username);
   }
 }
-
+//MOVED
 function setUpDepletion() {
   return setInterval(function () {
     if (overallPercent > 0) {
@@ -137,13 +195,12 @@ function setUpDepletion() {
     }
   }, 60000);
 }
-
+//MOVED
 function setUpCanvas() {
-  setUpBox();
   setUpFill();
   drawPicture(0);
 }
-
+//MOVED
 function showUserName(userName) {
   userNameUpper = userName.toUpperCase();
   c = document.getElementById('myCanvas');
@@ -151,19 +208,25 @@ function showUserName(userName) {
   ctx.clearRect(195, 65, 500, 40);
   ctx.font = '35px Monospace';
   ctx.textAlign = 'left';
+  ctx.strokeStyle = 'white';
   ctx.strokeText(userNameUpper, 200, 90);
 }
-
+//MOVED
 function setUpBox() {
   c = document.getElementById('myCanvas');
   ctx = c.getContext('2d');
   ctx.lineWidth = '4';
-  ctx.strokeStyle = 'lightgrey';
+  if (subsOnly === true) {
+    ctx.strokeStyle = '#9966cc';
+  } else {
+    ctx.strokeStyle = 'white';
+  }
+
   ctx.rect(200, 118, 504, 67);
   ctx.stroke();
 
-  bitsImage = document.getElementById('bitsImage');
-  ctx.drawImage(bitsImage, 710, 115);
+  //bitsImage = document.getElementById('bitsImage');
+  //ctx.drawImage(bitsImage, 710, 115);
 
   ctx.beginPath();
   ctx.moveTo(452, 100);
@@ -175,7 +238,7 @@ function setUpBox() {
   ctx.lineTo(452, 202);
   ctx.stroke();
 }
-
+//MOVED
 function setUpFill() {
   c = document.getElementById('myCanvas');
   ctx = c.getContext('2d');
@@ -190,7 +253,7 @@ function setUpFill() {
   ctx.fillStyle = grd;
   ctx.fillRect(rectangleStart, rectanglePositionTop, 0, rectangleHeight);
 }
-
+//MOVED
 function drawPicture(number) {
   c = document.getElementById('myCanvas');
   ctx = c.getContext('2d');
@@ -223,7 +286,7 @@ function drawPicture(number) {
 
   ctx.drawImage(statusImage, 5, 30);
 }
-
+//MOVED
 function fillRect(newNumber, previousNumber) {
   ctx.clearRect(202, rectanglePositionTop, 500, rectangleHeight);
   var rectangleBodyEnd = Math.round(newNumber * 2.5);
@@ -270,9 +333,44 @@ function fillRect(newNumber, previousNumber) {
   });
 }
 
-function setInitial() {
-  setUpCanvas();
+function setUpToggle() {
+  var subsOnlyToggle = document.getElementById('subsOnlyCheckBox');
+  if (subsOnlyToggle.checked) {
+    subsOnly = true;
+    setUpSubscribe();
+  } else {
+    subsOnly = false;
+    setUpSubscribe();
+  }
 
+  subsOnlyToggle.addEventListener('change', function () {
+    if (subsOnlyToggle.checked) {
+      subsOnly = true;
+      setUpSubscribe();
+    } else {
+      subsOnly = false;
+      setUpSubscribe();
+    }
+    setUpBox();
+  });
+  setUpBox();
+}
+
+function setUpSubscribe() {
+  c = document.getElementById('myCanvas');
+  ctx = c.getContext('2d');
+  if (subsOnly === true) {
+    var subImage = document.getElementById('subscribe');
+    ctx.drawImage(subImage, 198, 187);
+  } else {
+    ctx.clearRect(198, 187, 200, 40);
+  }
+}
+//MOVED
+function setInitial() {
+  setUpToggle();
+  setUpCanvas();
+  setUpSubscribe();
   winSound = document.getElementById('emptySound');
   lastSound = document.getElementById('emptySound');
   soundActivate = false;
@@ -297,7 +395,7 @@ function setInitial() {
 
   depletionTimer = setUpDepletion();
 }
-
+//MOVED
 function setUpSlider(sliderName, labelName, labelMessage, modifier) {
   var slider = document.getElementById(sliderName);
   var label = document.getElementById(labelName);

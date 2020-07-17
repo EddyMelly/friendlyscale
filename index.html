@@ -3,7 +3,7 @@
   <!-- prettier-ignore -->
   <head>
     <meta charset="utf-8">
-    <title>FriendlyScale v4</title>
+    <title>FriendlyScale v5</title>
     <meta name="description" content="Friendly Scale for Ceremor stream">
     <meta name="author" content="EdgarMelons">
     <link href="index.css" rel="stylesheet">
@@ -23,6 +23,7 @@
     <img id="ceremorFaceCrazy" src="images/ceremorFaceCrazy.png" style="display:none"/>
     <img id="ceremorFaceLove" src="images/ceremorFaceLove.png" style="display:none"/>
     <img id="ceremorFaceAngel" src="images/ceremorFaceAngel.png" style="display:none"/>
+    <img id="subscribe" src="images/subscribe.png" style="display:none"/>
     <img id="bitsImage" src="images/bitsImage.png" style="display:none"/>
     
 </head>
@@ -37,6 +38,12 @@
         
         <input type="submit" onclick="channelPointDecision(1000, 'evil', 'dumb_underscore_name');" name="" value="addChannelPoints" style="position:absolute;left:480px;top:450px;width:121px;height:30px;z-index:45;">
         <input type="submit" onclick="channelPointDecision(1000, 'good', 'Ceremor');" name="" value="subChannelPoints" style="position:absolute;left:620px;top:450px;width:121px;height:30px;z-index:45;">
+        <div style="position:absolute;left:200px;top:440px;width:30px;height:20px;z-index:47;">
+            <label class="switch" id="subsOnlyCheckLabel">
+            <input type="checkbox" id="subsOnlyCheckBox" />
+            <div class="toggle"></div>
+        </label></div>
+        <label class="sliderLabel" id="subsModeLabel"style="left:195px;top:475px;">SubsMode</label>
         <input type="submit" id="connect_btn" onclick="ConnectTwitchChat();" name="" value="Connect" style="position:absolute;left:480px;top:570px;width:121px;height:30px;z-index:45;">
         <input type="submit" id="disconnect_btn" onclick="DisconnectTwitchChat();" name="" value="Disconnect" style="position:absolute;left:620px;top:570px;width:121px;height:30px;z-index:45;">
         <label id="status" style="position:absolute;left:372px;top:500px;width:455px;height:62px;line-height:62px;z-index:47;">???</label>
