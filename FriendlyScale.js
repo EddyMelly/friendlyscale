@@ -114,7 +114,7 @@ function ConnectTwitchChat() {
     }
   });
 }
-
+//V5 NEW
 function subCheck(subscriber) {
   if (subscriber !== '') {
     return true;
@@ -126,6 +126,8 @@ function subCheck(subscriber) {
 function channelPointDecision(pointNumber, message, username, subscriber) {
   var uppercaseMessage = message.toUpperCase();
   //CHECK SUB MODE HERE
+  //V5 NEW
+  //
 
   if (subsOnly === true) {
     if (subCheck(subscriber)) {
@@ -142,8 +144,6 @@ function channelPointDecision(pointNumber, message, username, subscriber) {
         channelPointsAdd(pointNumber);
         showUserName(username);
       }
-    } else {
-      console.log('no sub');
     }
   } else {
     if (
@@ -205,7 +205,7 @@ function showUserName(userName) {
   userNameUpper = userName.toUpperCase();
   c = document.getElementById('myCanvas');
   ctx = c.getContext('2d');
-  ctx.clearRect(195, 65, 500, 40);
+  ctx.fillRect(195, 55, 500, 50);
   ctx.font = '35px Monospace';
   ctx.textAlign = 'left';
   ctx.strokeStyle = 'white';
